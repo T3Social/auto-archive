@@ -12,6 +12,7 @@ namespace humhub\modules\autoArchive\notifications;
 use humhub\modules\notification\components\BaseNotification;
 use Yii;
 use yii\base\Exception;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 
 class AutoArchiveAdminNotification extends BaseNotification
@@ -80,5 +81,21 @@ class AutoArchiveAdminNotification extends BaseNotification
     public function getMailMessage()
     {
         return Yii::t('AutoArchiveModule.notification', 'This space has been automatically archived because no content or comment was posted for a long period of time.');
+    }
+
+    /**
+     * Add params for view file
+     * You can also avoid rewriting this method by using the property values directly in the view using $viewable->buttonText and $viewable->buttonUrl
+     * Added attributes such as $this->buttonText are available here
+     * @inerhitdoc
+     */
+    public function getViewParams($params = [])
+    {
+        // Do not use already used keys such as 'headline' or 'content'
+        $result = [
+            'mailMessage' => $this->getMailMessage(),
+        ];
+
+        return ArrayHelper::merge(parent::getViewParams($result), $params);
     }
 }

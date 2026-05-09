@@ -28,8 +28,6 @@ use humhub\widgets\mails\MailContentEntry;
 /* @var $_params_ array */
 
 /* @var $mailMessage string */
-/* @var $buttonText string */
-/* @var $buttonUrl string */
 ?>
 
 <?php $this->beginContent('@notification/views/layouts/mail.php', $_params_); ?>
@@ -54,8 +52,8 @@ use humhub\widgets\mails\MailContentEntry;
         <td>
             <?= MailButtonList::widget(['buttons' => [
                 MailButton::widget([
-                    'url' => $buttonUrl ?: $url,
-                    'text' => $buttonText ?: Yii::t('ContentModule.notifications_mails', 'View Online'),
+                    'url' => $url,
+                    'text' => Yii::t('ContentModule.notifications_mails', 'View Online'),
                 ]),
             ]]) ?>
         </td>
