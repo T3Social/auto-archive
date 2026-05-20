@@ -2,8 +2,10 @@
     "id": "auto-archive",
     "name": "Auto Archive",
     "description": "Automatically archive inactive HumHub Spaces to keep your network tidy.",
-    "keywords": ["archive"],
-    "version": "1.0.0",
+    "keywords": [
+        "archive"
+    ],
+    "version": "1.0.1",
     "humhub": {
         "minVersion": "1.18",
         "maxVersion": "1.18"

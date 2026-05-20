@@ -25,12 +25,11 @@ use humhub\widgets\mails\MailContentEntry;
 /* @var $record Notification */
 /* @var $html string */
 /* @var $text string */
-/* @var $_params_ array */
 
 /* @var $mailMessage string */
 ?>
 
-<?php $this->beginContent('@notification/views/layouts/mail.php', $_params_); ?>
+<?php $this->beginContent('@notification/views/layouts/mail.php'); ?>
 
 <?php $contentRecord = $viewable->source ?>
 
