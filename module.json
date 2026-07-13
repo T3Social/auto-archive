@@ -8,7 +8,7 @@
     "version": "1.0.1",
     "humhub": {
         "minVersion": "1.18",
-        "maxVersion": "1.18"
+        "maxVersion": "1.19"
     },
     "homepage": "https://cuzy.app",
     "authors": [
