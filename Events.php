@@ -74,7 +74,7 @@ class Events
             $lastCommentDate = (new Query())
                 ->select(['MAX(comment.created_at)'])
                 ->from('comment')
-                ->innerJoin('content', 'content.object_model = comment.object_model AND content.object_id = comment.object_id')
+                ->innerJoin('content', 'content.id = comment.content_id')
                 ->where(['content.contentcontainer_id' => $space->contentcontainer_id])
                 ->scalar();
 
