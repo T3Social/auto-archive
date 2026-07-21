@@ -1,6 +1,11 @@
 {
   "name": "cuzy-app/auto-archive",
   "type": "humhub-module",
+  "autoload": {
+    "psr-4": {
+      "humhub\\modules\\autoArchive\\": ""
+    }
+  },
   "config": {
     "platform": {
       "php": "8.2"
