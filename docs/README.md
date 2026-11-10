@@ -25,7 +25,7 @@ https://github.com/cuzy-app/auto-archive
 
 ## Publisher
 
-[CUZY.APP](https://www.cuzy.app/)
+[CUZY.app](https://www.cuzy.app)
 
 ## Licence
 
