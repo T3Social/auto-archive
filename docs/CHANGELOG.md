@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.2 (Unreleased)
+------------------
+- Enh: The daily inactivity check runs two queries for all the spaces instead of two queries per space
+
 1.0.1 (May 20, 2026)
 --------------------
 - Fix email notifications for HumHub 1.18.3

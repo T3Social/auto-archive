@@ -60,28 +60,13 @@ class Events
         $threshold = date('Y-m-d H:i:s', strtotime("-{$daysBeforeArchiving} days"));
         $archived = 0;
 
+        // The spaces whose latest content, or latest comment, is recent enough: two grouped queries for
+        // all the enabled spaces, instead of two aggregate queries per space
+        $activeContainerIds = static::findActiveContainerIds($threshold);
+
         /** @var Space $space */
         foreach (Space::find()->where(['status' => Space::STATUS_ENABLED])->each() as $space) {
-
-            // Date of the most recent Content created in this space
-            $lastContentDate = (new Query())
-                ->select(['MAX(created_at)'])
-                ->from('content')
-                ->where(['contentcontainer_id' => $space->contentcontainer_id])
-                ->scalar();
-
-            // Date of the most recent Comment on any Content belonging to this space
-            $lastCommentDate = (new Query())
-                ->select(['MAX(comment.created_at)'])
-                ->from('comment')
-                ->innerJoin('content', 'content.id = comment.content_id')
-                ->where(['content.contentcontainer_id' => $space->contentcontainer_id])
-                ->scalar();
-
-            $contentInactive = ($lastContentDate === null || $lastContentDate < $threshold);
-            $commentInactive = ($lastCommentDate === null || $lastCommentDate < $threshold);
-
-            if ($contentInactive && $commentInactive) {
+            if (!isset($activeContainerIds[$space->contentcontainer_id])) {
                 Yii::warning('Auto Archiving Space "' . $space->displayName . '" for inactivity.', Module::ID);
                 $space->archive();
                 $archived++;
@@ -96,5 +81,41 @@ class Events
         }
 
         $controller->stdout('Auto Archive: archived ' . $archived . ' space(s).' . PHP_EOL, Console::FG_GREEN);
+    }
+
+    /**
+     * Content containers of the enabled spaces that had a Content created, or a Comment posted on one of
+     * their Contents, at or after the given date (a space is inactive when it is NOT in this list:
+     * no content and no comment, or only ones older than the threshold)
+     *
+     * @return array<int, true> indexed by contentcontainer_id
+     */
+    public static function findActiveContainerIds(string $threshold): array
+    {
+        $enabledSpaceContainers = (new Query())
+            ->select('contentcontainer_id')
+            ->from('space')
+            ->where(['status' => Space::STATUS_ENABLED]);
+
+        // Spaces whose most recent Content is recent enough
+        $contentActiveIds = (new Query())
+            ->select('contentcontainer_id')
+            ->from('content')
+            ->where(['contentcontainer_id' => $enabledSpaceContainers])
+            ->groupBy('contentcontainer_id')
+            ->having(['>=', 'MAX(created_at)', $threshold])
+            ->column();
+
+        // Spaces whose most recent Comment (on any of their Contents) is recent enough
+        $commentActiveIds = (new Query())
+            ->select('content.contentcontainer_id')
+            ->from('comment')
+            ->innerJoin('content', 'content.id = comment.content_id')
+            ->where(['content.contentcontainer_id' => $enabledSpaceContainers])
+            ->groupBy('content.contentcontainer_id')
+            ->having(['>=', 'MAX(comment.created_at)', $threshold])
+            ->column();
+
+        return array_fill_keys(array_map('intval', array_merge($contentActiveIds, $commentActiveIds)), true);
     }
 }
